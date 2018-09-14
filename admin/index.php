@@ -30,8 +30,8 @@ if($_SESSION['akses_level'] == "admin"){
 $siswa = mysqli_query($conn,"SELECT * FROM siswa");
 $guru = mysqli_query($conn,"SELECT * FROM user WHERE akses_level = 'guru' ");
 $mata_pelajaran = mysqli_query($conn,"SELECT * FROM mata_pelajaran");
-$mahasiswa_indikasi_dropout = mysqli_query($conn,"SELECT * FROM quisioner WHERE status = 'Indikasi Dropout' ");
-$mahasiswa_dropout = mysqli_query($conn,"SELECT * FROM quisioner WHERE status = 'Dropout' ");
+
+
 
 ?>
 
@@ -106,51 +106,6 @@ $mahasiswa_dropout = mysqli_query($conn,"SELECT * FROM quisioner WHERE status = 
     </div>
 </div>
 
-<div class="col-lg-3 col-md-6">
-    <div class="panel panel-warning">
-        <div class="panel-heading">
-            <div class="row">
-                <div class="col-xs-3">
-                    <i class="fa fa-user fa-5x"></i>
-                </div>
-                <div class="col-xs-9 text-right">
-                    <span style="font-size: 50px"><?php echo mysqli_num_rows($mahasiswa_indikasi_dropout) ?></span>
-                    <div>Indikasi Dropout</div>
-                </div>
-            </div>
-        </div>
-        <a href="quisioner.php">
-            <div class="panel-footer">
-                <span class="pull-left">View Details</span>
-                <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
-                <div class="clearfix"></div>
-            </div>
-        </a>
-    </div>
-</div>
-
-<div class="col-lg-3 col-md-6">
-    <div class="panel panel-danger">
-        <div class="panel-heading">
-            <div class="row">
-                <div class="col-xs-3">
-                    <i class="fa fa-user fa-5x"></i>
-                </div>
-                <div class="col-xs-9 text-right">
-                    <span style="font-size: 50px"><?php echo mysqli_num_rows($mahasiswa_dropout) ?></span>
-                    <div>Dropout</div>
-                </div>
-            </div>
-        </div>
-        <a href="quisioner.php">
-            <div class="panel-footer">
-                <span class="pull-left">View Details</span>
-                <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
-                <div class="clearfix"></div>
-            </div>
-        </a>
-    </div>
-</div>
 
 <div class="col-md-6">
 
@@ -193,6 +148,112 @@ $mahasiswa_dropout = mysqli_query($conn,"SELECT * FROM quisioner WHERE status = 
 </script>
 
 <?php  } ?>
+
+<?php 
+if($_SESSION['akses_level'] == "guru"){
+    $no = 1;
+    $id_user = $_SESSION['id_user'];
+    $jadwal = mysqli_query($conn,"
+                SELECT * 
+                FROM jadwal 
+                JOIN mata_pelajaran
+                ON jadwal.mata_pelajaran=mata_pelajaran.id_mata_pelajaran
+                JOIN kelas
+                ON jadwal.kelas=kelas.id_kelas
+                JOIN guru
+                ON guru.id_guru=mata_pelajaran.id_mata_pelajaran
+                WHERE guru.id_guru = '$id_user'
+    ");
+?>
+
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        Jadwal Kelas
+    </div>
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <tr>
+                <th>NO</th>
+                <th>Matpel</th>
+                <th>Kelas</th>
+                <th>Jadwal</th>
+                <th>Jumlah Siswa</th>
+                <th>#</th>
+            </tr>
+            <?php foreach($jadwal as $jadwal){ ?>
+            <?php  
+            $kelas = $jadwal['id_kelas'];
+            $siswa = mysqli_query($conn,"SELECT * from siswa WHERE kelas = '$kelas' ");
+            ?>
+            <tr>
+                <td><?php echo $no++ ?></td>
+                <td><?php echo $jadwal['nama_mata_pelajaran'] ?></td>
+                <td><?php echo $jadwal['nama_kelas'] ?></td>
+                <td><?php echo $jadwal['jam'] ?></td>
+                <td>
+                   <?php echo mysqli_num_rows($siswa); ?>
+                </td>
+                <td><button class="btn btn-info btn-xs" data-toggle="modal" data-target="#myModal<?php echo $jadwal['id_jadwal'] ?>"><i class="fa fa-user"></i> Siswa</button></td>
+            </tr>
+
+            
+            <!-- Modal -->
+            <div id="myModal<?php echo $jadwal['id_jadwal'] ?>" class="modal fade" role="dialog">
+              <div class="modal-dialog">
+
+                <!-- Modal content-->
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Absen Hadir Kelas <?php echo $jadwal['nama_kelas'] ?></h4>
+                  </div>
+                    <form method="post">
+
+                  <div class="modal-body">
+<ol>
+                            <?php  
+                            foreach ($siswa as $siswa) {
+                            ?>
+                                <li><?php echo $siswa['nama_siswa'] ?></li><input type="checkbox" name="hadir[]" value="1" required />
+                            <?php
+                            }
+                            ?>
+                        </ol>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="submit" class="btn btn-success" name="submit"><i class="fa fa-save"></i> Simpan</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-times"></i> Close</button>
+                  </div>
+                    </form>
+
+                </div>
+
+              </div>
+            </div>
+
+            <?php } ?>
+        </table>
+    </div>
+</div>
+
+<?php
+  if(isset($_POST['submit'])) 
+  {
+    $hadir = $_POST['hadir'];
+    $N = count($hadir);
+
+    echo("You selected $N hadir(s): ");
+    for($i=0; $i < $N; $i++)
+    {
+      echo($hadir[$i] . " ");
+    }
+  } 
+
+?>
+
+
+<?php } ?>
+
 
 <?php  
 include '../include/footer.php';

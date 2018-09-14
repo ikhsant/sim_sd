@@ -1,13 +1,12 @@
 <?php 
-$title = 'Data Guru'; 
+$title = 'Data Jadwal'; 
 include '../include/header.php';
 ?>
 
 <?php
-$xcrud->table('guru');
+$xcrud->table('jadwal');
+$xcrud->relation('kelas','kelas','id_kelas','nama_kelas');
 $xcrud->relation('mata_pelajaran','mata_pelajaran','id_mata_pelajaran','nama_mata_pelajaran');
-$xcrud->columns('password',TRUE);
-$xcrud->change_type('foto', 'image');
 echo $xcrud->render();
 ?>
 

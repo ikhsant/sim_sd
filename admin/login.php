@@ -25,16 +25,29 @@ $setting = mysqli_fetch_assoc(mysqli_query($conn,'SELECT * FROM setting LIMIT 1'
       $pass = mysqli_real_escape_string($conn,sha1($_POST['pass']));
       $result = mysqli_query($conn,"SELECT * FROM user WHERE username = '$user' AND password = '$pass' ");
       $row = mysqli_fetch_assoc($result);
+      // guru
+      $pass_guru = mysqli_real_escape_string($conn,$_POST['pass']);
+      $result_guru = mysqli_query($conn,"SELECT * FROM guru WHERE nip = '$user' AND password = '$pass_guru' ");
+      $row_guru = mysqli_fetch_assoc($result_guru);
 
 
-      // cek di db
+      // cek di db admin
       if(mysqli_num_rows($result) > 0){
         $_SESSION['username'] = $user;
+        $_SESSION['id_user'] = $row['id_user'];
         $_SESSION['foto'] = $row['foto'];
-        $_SESSION['nama'] = $row['nama'];
+        $_SESSION['nama'] = $row['nama_user'];
         $_SESSION['akses_level'] = $row['akses_level'];
         $_SESSION['pesan'] = 'Selamat Datang '.$row['nama'].' !';
-                // Redirect user to index.php
+        // Redirect user to index.php
+        header("Location: index.php");
+      }elseif(mysqli_num_rows($result_guru) > 0){
+        $_SESSION['foto'] = $row_guru['foto'];
+        $_SESSION['id_user'] = $row_guru['id_guru'];
+        $_SESSION['nama'] = $row_guru['nama_guru'];
+        $_SESSION['akses_level'] = 'guru';
+        $_SESSION['pesan'] = 'Selamat Datang '.$row_guru['nama_guru'].' !';
+        // Redirect user to index.php
         header("Location: index.php");
       }else{
         echo '

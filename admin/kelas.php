@@ -1,11 +1,10 @@
 <?php 
-$title = 'Data Siswa'; 
+$title = 'Data Kelas'; 
 include '../include/header.php';
 ?>
 
 <?php
-$xcrud->table('siswa');
-$xcrud->relation('kelas','kelas','id_kelas','nama_kelas');
+$xcrud->table('kelas');
 echo $xcrud->render();
 ?>
 

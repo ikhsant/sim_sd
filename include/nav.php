@@ -13,14 +13,20 @@
     </div>
     <div class="collapse navbar-collapse" id="myNavbar">
       <ul class="nav navbar-nav">
-        <?php if($_SESSION['akses_level'] == "admin"){ ?>
         <li><a href="index.php"><i class="fa fa-star"></i> Dashboard</a></li>
+
+        <?php if($_SESSION['akses_level'] == "admin"){ ?>
         <li><a href="siswa.php"><i class="fa fa-graduation-cap"></i> Siswa</a></li>
         <li><a href="guru.php"><i class="fa fa-graduation-cap"></i> Guru</a></li>
         <li><a href="mata_pelajaran.php"><i class="fa fa-book"></i> Mata Pelajaran</a></li>
+        <li><a href="kelas.php"><i class="fa fa-building-o"></i> Kelas</a></li>
+        <li><a href="jadwal.php"><i class="fa fa-clock-o"></i> Jadwal</a></li>
         <li><a href="user.php"><i class="fa fa-users"></i> User</a></li>
         <?php  } ?>
 
+        <?php if($_SESSION['akses_level'] == "guru"){ ?>
+        <li><a href="nilai.php"><i class="fa fa-book"></i> Nilai</a></li>
+        <?php } ?>
 
       </ul>
       <ul class="nav navbar-nav navbar-right">

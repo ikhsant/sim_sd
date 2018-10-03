@@ -28,7 +28,7 @@ if (!empty($_SESSION['error'])) { ?>
 if($_SESSION['akses_level'] == "admin"){
 
 $siswa = mysqli_query($conn,"SELECT * FROM siswa");
-$guru = mysqli_query($conn,"SELECT * FROM user WHERE akses_level = 'guru' ");
+$guru = mysqli_query($conn,"SELECT * FROM guru ");
 $mata_pelajaran = mysqli_query($conn,"SELECT * FROM mata_pelajaran");
 
 
@@ -119,28 +119,23 @@ $mata_pelajaran = mysqli_query($conn,"SELECT * FROM mata_pelajaran");
     </div>
 </div>
 
+<?php  
+$siswa_perempuan = mysqli_num_rows(mysqli_query($conn, "SELECT * FROM siswa WHERE jenis_kelamin = 'P' "));
+$siswa_lakilaki = mysqli_num_rows(mysqli_query($conn, "SELECT * FROM siswa WHERE jenis_kelamin = 'l' "));
+?>
 <script>
     var ctx = document.getElementById("myChart").getContext('2d');
     var myChart = new Chart(ctx, {
         type: 'pie',
         data: {
-            labels: ["Bertahan", "Indikasi Bertahan", "Indikasi Dropout","Dropout"],
+            labels: ["Perempuan", "Laki-Laki"],
             datasets: [{
                 label: '# Stok',
-                data: [<?php echo mysqli_num_rows($mahasiswa_bertahan) ?>, <?php echo mysqli_num_rows($mahasiswa_indikasi_bertahan) ?>, <?php echo mysqli_num_rows($mahasiswa_indikasi_dropout) ?>, <?php echo mysqli_num_rows($mahasiswa_dropout) ?>],
+                data: [<?php echo $siswa_perempuan ?>, <?php echo $siswa_lakilaki ?>],
                 backgroundColor: [
-                'rgba(0, 255, 0)',
-                'rgba(255, 255, 0)',
-                'rgba(255, 128, 0)',
-                'rgba(255, 0, 0)'
-                ],
-                borderColor: [
-                'rgba(255,99,132,1)',
-                'rgba(54, 162, 235, 1)',
-                'rgba(255,54,80,1)',
-                'rgba(255, 206, 86, 1)'
-                ],
-                borderWidth: 1
+                'rgb(255, 128, 170)',
+                'rgb(0, 255, 153)',
+                ]
             }]
         },
 
@@ -164,6 +159,7 @@ if($_SESSION['akses_level'] == "guru"){
                 ON guru.id_guru=mata_pelajaran.id_mata_pelajaran
                 WHERE guru.id_guru = '$id_user'
     ");
+
 ?>
 
 <div class="panel panel-primary">
@@ -214,7 +210,8 @@ if($_SESSION['akses_level'] == "guru"){
                             <?php  
                             foreach ($siswa as $siswa) {
                             ?>
-                                <li><?php echo $siswa['nama_siswa'] ?></li><input type="checkbox" name="hadir[]" value="1" required />
+                                <li><?php echo $siswa['nama_siswa'] ?></li>
+                                <input type="checkbox" name="hadir[]" value="<?php echo $siswa['id_siswa'] ?>" required />
                             <?php
                             }
                             ?>
